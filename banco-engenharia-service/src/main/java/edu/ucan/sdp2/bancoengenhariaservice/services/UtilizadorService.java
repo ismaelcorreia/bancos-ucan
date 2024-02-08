@@ -33,7 +33,7 @@ public class UtilizadorService extends ServicoGenerico<Utilizador, UtilizadorRes
         return UtilizadorRespostaDto.builder()
                 .id(utilizador.getId())
                 .nomeCompleto(utilizador.getNomeCompleto())
-                .enderecoActual(utilizador.getEnderecoActual())
+
                 .email(utilizador.getEmail())
                 .listaPerfil(utilizador.getRoles().stream().map(UserRole::getDescricao).collect(Collectors.toList()))
                 .bilheteIdentidade(utilizador.getNumeroBilhete())

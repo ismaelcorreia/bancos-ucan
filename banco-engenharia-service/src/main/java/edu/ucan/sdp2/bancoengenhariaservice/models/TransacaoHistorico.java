@@ -20,7 +20,7 @@ public class TransacaoHistorico extends GenericId {
 
     @ManyToOne
     private Transacao contaOrigem;
-    private StatusTransacao status;
+//    private StatusTransacao status;
 
 
 }

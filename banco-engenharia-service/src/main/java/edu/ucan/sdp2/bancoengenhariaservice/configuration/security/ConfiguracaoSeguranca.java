@@ -52,6 +52,10 @@ public class ConfiguracaoSeguranca {
                         request.requestMatchers(HttpMethod.GET,  "/storage/**").permitAll();
                         request.requestMatchers(HttpMethod.GET, "/src/**").permitAll();
                         request.requestMatchers(HttpMethod.GET, "/publico/**").permitAll();
+                        request.requestMatchers(HttpMethod.POST, "/publico/**").permitAll();
+//                        request.requestMatchers(HttpMethod.POST, "/swagger-ui/**").permitAll();
+//                        request.requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll();
+                        request.requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll();
                         request.anyRequest().authenticated();
                     })
                     .sessionManagement(sessionManagement->

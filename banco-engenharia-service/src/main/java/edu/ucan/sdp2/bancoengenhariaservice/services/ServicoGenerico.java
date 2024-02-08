@@ -90,6 +90,9 @@ public abstract  class ServicoGenerico<T, R>{
         return new Resposta<R>("Nova informação adicionada!", mapearResposta(repository.save(entityRequest.mapearEntidade()))).sucesso();
     }
 
+    public long total() {
+        return repository.count();
+    }
     protected ResponseEntity<Resposta> actualizarPadrao(UUID id, EntidadeRequisicaoAbstract<T> entityRequest) {
 
 

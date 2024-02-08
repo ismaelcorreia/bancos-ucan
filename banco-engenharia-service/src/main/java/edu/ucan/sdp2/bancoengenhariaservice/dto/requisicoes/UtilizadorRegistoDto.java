@@ -10,9 +10,9 @@ import lombok.Setter;
 import lombok.With;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.management.relation.Role;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -29,10 +29,10 @@ public class UtilizadorRegistoDto extends EntidadeRequisicaoAbstract<Utilizador>
     private String nomeCompleto;
     private String numeroBilhete;
     private LocalDate dataNascimento;
-    private Endereco enderecoActual;
-    private Endereco enderecoNascimento;
     private MultipartFile image;
     private List<UserRole> perfies;
+    private String enderecoNascimentoId;
+    private String enderecoActualId;
 
 
 
@@ -46,8 +46,8 @@ public class UtilizadorRegistoDto extends EntidadeRequisicaoAbstract<Utilizador>
         utilizador.setPalavraPasse(this.palavraPasse);
         utilizador.setNomeCompleto(this.nomeCompleto);
         utilizador.setNumeroBilhete(this.numeroBilhete);
-        utilizador.setEnderecoActual(this.enderecoActual);
-        utilizador.setEnderecoNascimento(this.enderecoNascimento);
+        utilizador.setEnderecoNascimento(new Endereco(UUID.fromString(enderecoActualId)));
+        utilizador.setEnderecoActual(new Endereco(UUID.fromString(enderecoNascimentoId)));
         utilizador.setRoles(this.perfies);
         return utilizador;
     }

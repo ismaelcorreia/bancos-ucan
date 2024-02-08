@@ -1,7 +1,6 @@
 package edu.ucan.sdp2.bancoengenhariaservice.dto.requisicoes;
 
 
-import edu.ucan.sdp2.bancoengenhariaservice.models.Endereco;
 import edu.ucan.sdp2.bancoengenhariaservice.models.Utilizador;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,8 +24,6 @@ public class UtilizadorAutoRegistoDto  extends EntidadeRequisicaoAbstract<Utiliz
     private String nomeCompleto;
     private String numeroBilhete;
     private LocalDate dataNascimento;
-    private Endereco enderecoActual;
-    private Endereco enderecoNascimento;
     private MultipartFile ficheiro;
 
 
@@ -38,8 +35,6 @@ public class UtilizadorAutoRegistoDto  extends EntidadeRequisicaoAbstract<Utiliz
         utilizador.setPalavraPasse(this.palavraPasse);
         utilizador.setNomeCompleto(this.nomeCompleto);
         utilizador.setNumeroBilhete(this.numeroBilhete);
-        utilizador.setEnderecoActual(this.enderecoActual);
-        utilizador.setEnderecoNascimento(this.enderecoNascimento);
         return utilizador;
     }
 
