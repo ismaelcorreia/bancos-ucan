@@ -6,6 +6,7 @@ import edu.ucan.sdp2.bancoengenhariaservice.dto.requisicoes.UtilizadorAutoRegist
 import edu.ucan.sdp2.bancoengenhariaservice.dto.requisicoes.UtilizadorLoginRequisicaoDto;
 import edu.ucan.sdp2.bancoengenhariaservice.models.TelefoneVerificacao;
 import edu.ucan.sdp2.bancoengenhariaservice.services.AutenticacaoService;
+import edu.ucan.sdp2.bancoengenhariaservice.services.AutorizacaoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -24,16 +25,17 @@ import org.springframework.web.multipart.MultipartFile;
 public class AutenticacaoController {
 
     private final AutenticacaoService service;
+    private final AutorizacaoService autorizacaoService;
 
-    @PostMapping(value = "/verificar_telemovel")
+    @PostMapping(value = "/requisitar-activacao")
     public ResponseEntity<Resposta> verificarTelemovel(@RequestParam String phone){
-        return  service.enviarCodigoVerificacao(phone);
+        return  autorizacaoService.requisitarActivacaoConta(phone);
     }
 
-    @Secured({"ROLE_USER"})
+
     @PostMapping(value = "/confirmar-codigo")
     public ResponseEntity<Resposta> confirmarCodigo(@RequestBody TelefoneVerificacao dto){
-        return  service.verificacaoCodigoTelefone(dto.getTelefone(), dto.getCodigo());
+        return  autorizacaoService.verificacaoCodigoTelefone(dto.getTelefone(), dto.getCodigo());
     }
     @Operation(summary = "Obter Pessoa", description = "Obter detalhes de uma pessoa por ID")
     @ApiResponses(value = {

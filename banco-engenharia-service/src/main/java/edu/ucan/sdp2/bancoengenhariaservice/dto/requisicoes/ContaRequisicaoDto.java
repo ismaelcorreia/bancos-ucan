@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 @Data
 @AllArgsConstructor
 public class ContaRequisicaoDto extends EntidadeRequisicaoAbstract<ContaBancaria> {
-    private String endereco;
     private double saldo;
     private List<String> representantesId;
     @Override
@@ -32,6 +31,13 @@ public class ContaRequisicaoDto extends EntidadeRequisicaoAbstract<ContaBancaria
         if (representantesId == null || representantesId.isEmpty()) {
             this.mensagemErro="A conta deve ter pelo menos um representante.";
             return false;
+        }else {
+            for (String representante : representantesId) {
+                if (representante == null || representante.isEmpty()) {
+                    this.mensagemErro = "Um dos representantes foi mal informado.";
+                    return false;
+                }
+            }
         }
         return true;
     }

@@ -23,6 +23,7 @@ import edu.ucan.sdp2.bancoengenhariaservice.utils.ManipuladorTextoUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.kafka.common.metrics.Stat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,25 +38,20 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class AutenticacaoService {
 
-    private final ISMSServico smsServico;
     private final PasswordEncoder passwordEncoder;
     private final ManipuladorFicheiroUtil manipuladorFicheiroUtil;
     private final UtilizadorRepository repository;
     private final JWTUtil jwtUtil;
     private final UtilizadorMapper mapper;
-    private final TelefoneVerificacaoRepository telefoneVerificacaoRepository;
-
-
+    private final AutorizacaoService autorizacaoService;
 
     public ResponseEntity<Resposta> passwordReset(ResetSenhaRequisicaoDto request) {
-        var accountVerification = telefoneVerificacaoRepository.getTelefoneVerificaoByTelefoneAndCodigo(request.getPhoneNumber(), request.getCode());
-        if (accountVerification == null) {
-            return new Resposta<>("Verificação da conta falhou!", null).naoEncontrado();
+        var resposta = autorizacaoService.autorizarTelefoneVerificacao(request.getPhoneNumber(), request.getCode());
+
+        if (!resposta.getDados()) {
+            return resposta.recusado();
         }
 
-        if (accountVerification.getStatus().equals(Status.PENDING)){
-            accountVerification.setStatus(Status.USED);
-        }
         var usr = repository.findByEmailOrUsernameOrTelefone(
                 request.getPhoneNumber(),
                 request.getPhoneNumber(),
@@ -90,12 +86,15 @@ public class AutenticacaoService {
 
         final String username = gerarNomeUtilizador(user.getNomeCompleto());
         user.setUsername(username);
+        user.setStatus(Status.PENDING);
         var userSaved = repository.save(user);
 
         if (!request.getFicheiro().isEmpty()) {
             final String urlImage = manipuladorFicheiroUtil.salvarImagemPerfil(userSaved.getUsername(), request.getFicheiro());
             userSaved.setFotografia(urlImage);
         }
+
+
 
         return login(new UtilizadorLoginRequisicaoDto(
                 user.getUsername(),
@@ -147,59 +146,8 @@ public class AutenticacaoService {
         return _username;
     }
 
-    // Esta função serve para confirmar o número de telefone.
-    public ResponseEntity<Resposta> enviarCodigoVerificacao(String telefone) {
 
-        final TelefoneVerificacao antigoTelefoneVerificacao = telefoneVerificacaoRepository.getFirstByTelefoneAndStatus(telefone, Status.ACTIVE);
 
-//        TODO: Eliminar a existência de uma requisicao de activação anterior
-        if (antigoTelefoneVerificacao != null){
-            actualizarStatusTelefoneVerificacao(antigoTelefoneVerificacao, Status.DELETED);
-        }
-
-        final String codigoVerificacao = ManipuladorTextoUtil.gerarDigitosAleatorios();
-        TelefoneVerificacao telefoneVerificacao = new TelefoneVerificacao();
-        telefoneVerificacao.setCodigo(codigoVerificacao);
-        telefoneVerificacao.setTelefone(telefone);
-        telefoneVerificacao.setStatus(Status.ACTIVE);
-
-        // Armazenar para consolidar a verificação
-        telefoneVerificacaoRepository.save(telefoneVerificacao);
-
-        // Enviar mensagem
-        smsServico.enviarMensagem(
-                new SMSModelo(
-                        telefone,
-                        String.format( "Utilize o segunite código %s para seguir.", codigoVerificacao)
-                )
-        );
-
-        // Se chegou aqui, parece que está tudo bem!
-        return new Resposta<String>(String.format("Enviamos um código de verificação de conta para {}", telefone), null).sucesso();
-    }
-
-    public  ResponseEntity<Resposta> verificacaoCodigoTelefone(String telefone, String codigo) {
-
-        final TelefoneVerificacao telefoneVerificacao = telefoneVerificacaoRepository.getTelefoneVerificaoByTelefoneAndCodigo(telefone, codigo);
-        if (telefoneVerificacao != null) {
-            if (telefoneVerificacao.getStatus().equals(Status.ACTIVE)) {
-                var dataCriacao = telefoneVerificacao.getDataCriacao();
-                if (!ManipiladorTempoUtil.isTempoMaior(dataCriacao, LocalDateTime.now())) {
-                    actualizarStatusTelefoneVerificacao(telefoneVerificacao, Status.USED);
-                    return new Resposta<String>("Código confirmado com sucesso", null).sucesso();
-                }
-                actualizarStatusTelefoneVerificacao(telefoneVerificacao, Status.EXPIRED);
-                return new Resposta<String>("O tempo expirou! por favor, volte para gerar um novo código", null).recusado();
-            }
-            return new Resposta<String>("Este código já foi usado, tente gerar novamente", null).recusado();
-        }
-        return new Resposta<String>("Este código não existe!", null).naoEncontrado();
-    }
-
-    void actualizarStatusTelefoneVerificacao(TelefoneVerificacao telefoneVerificacao, Status status) {
-        telefoneVerificacao.setStatus(status);
-        telefoneVerificacaoRepository.save(telefoneVerificacao);
-    }
 
 
 }

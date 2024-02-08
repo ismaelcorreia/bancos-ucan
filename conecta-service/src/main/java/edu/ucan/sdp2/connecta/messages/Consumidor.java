@@ -19,5 +19,6 @@ public class Consumidor extends OuvinteAbstract {
     @Override
     public void escuta(String json) {
         log.info("Conecta consumer: {}", json);
+
     }
 }

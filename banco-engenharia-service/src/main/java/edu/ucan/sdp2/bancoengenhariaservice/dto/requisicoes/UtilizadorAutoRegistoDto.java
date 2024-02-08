@@ -49,6 +49,9 @@ public class UtilizadorAutoRegistoDto  extends EntidadeRequisicaoAbstract<Utiliz
         }else if(numeroBilhete == null || numeroBilhete.isBlank()){
             this.mensagemErro = "O bilhete é um campo obrigatório, deve estar preenchido correctamente";
             return false;
+        }else if(palavraPasse == null || palavraPasse.isBlank()){
+            this.mensagemErro = "A palavra-passe é um campo obrigatório!";
+            return false;
         }
         return true;
     }
