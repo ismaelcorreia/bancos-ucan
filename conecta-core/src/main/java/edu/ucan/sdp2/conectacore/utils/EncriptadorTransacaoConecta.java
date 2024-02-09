@@ -2,32 +2,44 @@ package edu.ucan.sdp2.conectacore.utils;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.PBEParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.KeySpec;
 import java.util.Base64;
 
 public class EncriptadorTransacaoConecta {
+
     private static final String ALGORITHM = "AES";
-    private static final String TRANSFORMATION = "AES/ECB/PKCS5Padding";
 
-    public static String encriptar(String chaveString, String texto) throws Exception {
-        SecretKey chave = gerarChave(chaveString);
-        Cipher cipher = Cipher.getInstance(TRANSFORMATION);
-        cipher.init(Cipher.ENCRYPT_MODE, chave);
-        byte[] textoEncriptado = cipher.doFinal(texto.getBytes());
-        return Base64.getEncoder().encodeToString(textoEncriptado);
+    public static String encriptar(String chave, String text) {
+        try {
+            SecretKey secretKey = new SecretKeySpec(chave.getBytes(), ALGORITHM);
+            Cipher cipher = Cipher.getInstance(ALGORITHM);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            byte[] encryptedBytes = cipher.doFinal(text.getBytes());
+            return Base64.getEncoder().encodeToString(encryptedBytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    public static String desencriptar(String chaveString, String textoEncriptado) throws Exception {
-        SecretKey chave = gerarChave(chaveString);
-        Cipher cipher = Cipher.getInstance(TRANSFORMATION);
-        cipher.init(Cipher.DECRYPT_MODE, chave);
-        byte[] textoDesencriptado = cipher.doFinal(Base64.getDecoder().decode(textoEncriptado));
-        return new String(textoDesencriptado);
+    public static String desencriptar(String chave, String encryptedText) {
+        try {
+            SecretKey secretKey = new SecretKeySpec(chave.getBytes(), ALGORITHM);
+            Cipher cipher = Cipher.getInstance(ALGORITHM);
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+            byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedText));
+            return new String(decryptedBytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    private static SecretKey gerarChave(String chaveString) throws Exception {
-        byte[] chaveBytes = chaveString.getBytes();
-        SecretKeySpec chaveKeySpec = new SecretKeySpec(chaveBytes, ALGORITHM);
-        return chaveKeySpec;
-    }
 }

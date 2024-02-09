@@ -1,8 +1,9 @@
-package edu.ucan.sdp2.conectacore.service;
+package edu.ucan.sdp2.conectacore.banco;
 
 
 import edu.ucan.sdp2.conectacore.models.TransacaoConecta;
 import edu.ucan.sdp2.conectacore.models.TransacaoConectaDetalhes;
+import edu.ucan.sdp2.conectacore.service.ConectaEmissorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

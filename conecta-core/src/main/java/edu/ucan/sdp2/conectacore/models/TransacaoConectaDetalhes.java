@@ -1,10 +1,14 @@
 package edu.ucan.sdp2.conectacore.models;
 
 import com.google.gson.Gson;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class TransacaoConectaDetalhes  implements Serializable {
 
     private String iban;

@@ -16,6 +16,11 @@ public class Consumidor extends OuvinteAbstract
     @SneakyThrows
     @Override
     public void escuta(String json) {
-        log.info("Banco-Engenharia consumer: {}", json);
+        log.info("Mensagem recebida Em Banco: {}", json);
+    }
+
+    @Override
+    public void falha(String json) {
+        log.info("Mensagem recebida Em Falha: {}", json);
     }
 }

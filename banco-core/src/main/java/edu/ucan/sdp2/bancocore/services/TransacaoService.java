@@ -5,14 +5,18 @@ import edu.ucan.sdp2.bancocore.dto.Resposta;
 import edu.ucan.sdp2.bancocore.dto.requisicoes.EntidadeRequisicaoAbstract;
 import edu.ucan.sdp2.bancocore.dto.requisicoes.TransacaoDepositoRequisicao;
 import edu.ucan.sdp2.bancocore.dto.requisicoes.TransacaoTransferenciaRequisicao;
+import edu.ucan.sdp2.bancocore.entities.Movimento;
 import edu.ucan.sdp2.bancocore.entities.Transacao;
 import edu.ucan.sdp2.bancocore.entities.Utilizador;
+import edu.ucan.sdp2.bancocore.enums.TipoMovimento;
 import edu.ucan.sdp2.bancocore.mapper.MovimentoMapper;
 import edu.ucan.sdp2.bancocore.repositories.ContaBancariaRepository;
 import edu.ucan.sdp2.bancocore.repositories.TransacaoRepository;
 import edu.ucan.sdp2.bancocore.utils.ManipuladorContaUtil;
 import edu.ucan.sdp2.bancocore.utils.SessaoRequisicao;
-import edu.ucan.sdp2.conectacore.service.ConectaEmissorBancoService;
+import edu.ucan.sdp2.conectacore.banco.ConectaEmissorBancoService;
+import edu.ucan.sdp2.conectacore.models.TransacaoConecta;
+import edu.ucan.sdp2.conectacore.models.TransacaoConectaDetalhes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -88,9 +92,12 @@ public class TransacaoService extends ServicoGenerico<Transacao, Transacao> {
             }
         }else {
             boolean isEnviado = conectaService.enviarMovimento(
-                    MovimentoMapper.movimentoParaTransacaoConectaDetalhe(transferencia.getMovimento())
-            );
-
+                        new TransacaoConectaDetalhes(
+                                transferencia.getContaDestino(),
+                                transferencia.getMovimento().getValorMovimento(),
+                                TipoMovimento.Credito.toString()
+                        )
+                    );
             if (!isEnviado) {
                 movimentoService.reverterMovimento(resposta.getDados());
                 return new Resposta<>("A operação não foi enviada por erro na conciliação de dados",null) .error();

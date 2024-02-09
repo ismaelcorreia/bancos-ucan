@@ -12,8 +12,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class Producer {
 
-
-
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Autowired

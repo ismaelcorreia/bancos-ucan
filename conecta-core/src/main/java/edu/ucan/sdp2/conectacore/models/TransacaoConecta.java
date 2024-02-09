@@ -1,11 +1,15 @@
 package edu.ucan.sdp2.conectacore.models;
 
 import com.google.gson.Gson;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class TransacaoConecta implements Serializable {
 
     private String topico;
