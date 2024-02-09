@@ -30,21 +30,36 @@ public class ConnectaApplicationTests {
 	private String topic;
 	@Test
 	void contextLoads() {
-		TransacaoConecta transacaoConecta = new TransacaoConecta();
-		transacaoConecta.setId(UUID.randomUUID());
-		transacaoConecta.setDestino("destino-teste");
-		transacaoConecta.setOrigem("origem-teste");
-		transacaoConecta.setMoeda(Moeda.AOA);
-		transacaoConecta.setMontante(new BigDecimal(3000));
-		transacaoConecta.setStatus(StatusTransacao.Pendente);
-		transacaoConecta.setDataHoraTransacao(new Date());
-		transacaoConecta.setTipoOperacao(TipoOperacao.Transferencia);
-
-
-		producer.enviarEvento(transacaoConecta,
-				topic
-		);
+//		TransacaoConecta transacaoConecta = new TransacaoConecta();
+//		transacaoConecta.setId(UUID.randomUUID());
+//		transacaoConecta.setDestino("destino-teste");
+//		transacaoConecta.setOrigem("origem-teste");
+//		transacaoConecta.setMoeda(Moeda.AOA);
+//		transacaoConecta.setMontante(new BigDecimal(3000));
+//		transacaoConecta.setStatus(StatusTransacao.Pendente);
+//		transacaoConecta.setDataHoraTransacao(new Date());
+//		transacaoConecta.setTipoOperacao(TipoOperacao.Transferencia);
+//
+//
+//		producer.enviarEvento(transacaoConecta,
+//				topic
+//		);
 	}
 
+	@Test
+	void encriptar() {
+		String chave;
+		Object object;
+		String resultado;
+	}
+
+
+
+	@Test
+	void decriptar() {
+		String chave;
+		String encriptado;
+		Object resultado;
+	}
 
 }
