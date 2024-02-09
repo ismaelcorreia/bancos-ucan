@@ -70,7 +70,32 @@ public class MovimentoService extends ServicoGenerico<Movimento, Movimento>{
         contaBancariaRepository.save(contaBancaria);
         return new Resposta<>("Movimento bem sucedido.", repository.save(movimento));
     }
-// TODO:
+
+
+    public Resposta<Movimento> movimentarContaPorIban(Movimento movimento) {
+        ContaBancaria contaBancaria = contaBancariaRepository.findFirstByIbanConta(movimento.getConta().getIbanConta());
+        if(contaBancaria == null) {
+            return new Resposta<>("Não reconhecemos nenhuma conta com este IBAN", null);
+        }
+        double valorDepois;
+        if (movimento.getTipoMovimento().equals(TipoMovimento.Debito)) {
+            valorDepois = contaBancaria.getSaldoDisponivel() - movimento.getValorMovimento();
+            if (valorDepois < 0) {
+                return new Resposta<>("O saldo da sua conta é insuficiente para realizar a operação", null);
+            }
+        }else {
+            valorDepois = contaBancaria.getSaldoDisponivel() + movimento.getValorMovimento();
+        }
+        movimento.setSaldoAnterior(contaBancaria.getSaldoDisponivel());
+        movimento.setSaldoDepois(valorDepois);
+        contaBancaria.setSaldoDisponivel(valorDepois);
+        contaBancariaRepository.save(contaBancaria);
+        return new Resposta<>("Movimento bem sucedido.", repository.save(movimento));
+    }
+
+
+
+    // TODO:
     public Resposta<Movimento> movimentarContaPorTransacao(TransacaoConecta dto) {
         if(!dto.isValido()) {
             return new Resposta<>("Dados da transação mal formatados", null);

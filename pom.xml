@@ -25,6 +25,7 @@
         <module>conecta-service</module>
         <module>banco-core</module>
         <module>banco-engenharia-service</module>
+        <module>banco-direito-service</module>
     </modules>
 
 
