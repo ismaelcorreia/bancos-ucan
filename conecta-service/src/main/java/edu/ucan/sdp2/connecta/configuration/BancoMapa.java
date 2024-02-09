@@ -6,14 +6,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum BancoMapa {
-    ENG("banco-engenharia-topico","banco-engenharia-topico-falha","mysecretkey12345"),
-    DIR("banco-direito-topico","banco-direito-topico-falha","mysecretkey12345"),
-    ECO("banco-economia-topico","banco-economia-topico-falha","mysecretkey12345"),
-    LIXEIRA("conecta-lixeira","",""),;
+    ENG("banco-engenharia-topico","banco-engenharia-topico-falha","mysecretkey12345","http://localhost:8082"),
+    DIR("banco-direito-topico","banco-direito-topico-falha","mysecretkey12345","http://localhost:8083"),
+    ECO("banco-economia-topico","banco-economia-topico-falha","mysecretkey12345","http://localhost:8084"),
+    LIXEIRA("conecta-lixeira","","",""),;
 
     private final String topico;
     private final String topicoFalha;
     private final String chave;
+    private final String host;
 
     public static BancoMapa fromTopico(String topico) {
         for (BancoMapa bancosTopico: BancoMapa.values()){

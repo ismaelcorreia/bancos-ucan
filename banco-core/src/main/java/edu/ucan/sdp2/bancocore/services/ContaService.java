@@ -76,8 +76,8 @@ public class ContaService extends ServicoGenerico<ContaBancaria, ContaBancaria>{
         return new Resposta<>("Conta carregada com sucesso!", conta).sucesso();
     }
 
-    public ResponseEntity<Resposta> contaPorConta(String iban) {
-        var conta = getContaBancariaRepository().findFirstByNumeroConta(iban);
+    public ResponseEntity<Resposta> contaPorNumeroConta(String numero) {
+        var conta = getContaBancariaRepository().findFirstByNumeroConta(numero);
 
         if (conta == null) {
             return new Resposta<>("Não consegimos identificar a tua conta", null).naoEncontrado();

@@ -7,6 +7,7 @@ import edu.ucan.sdp2.conectacore.service.ConectaEmissorService;
 import edu.ucan.sdp2.conectacore.utils.JsonUtil;
 import edu.ucan.sdp2.connecta.configuration.BancoMapa;
 import edu.ucan.sdp2.connecta.enums.BancosTopicos;
+import edu.ucan.sdp2.connecta.service.ServicoConta;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -40,7 +41,15 @@ public class Consumidor extends OuvinteAbstract {
         if (bancDestino == null) {
             conectaEmissorService.enviarMovimento(transacao, bancoOrigem.getChave(), bancoOrigem.getTopicoFalha());
         }else {
-            conectaEmissorService.enviarMovimento(transacao, bancDestino.getChave(), bancDestino.getTopico());
+            ServicoConta.checarConta(bancDestino.getHost(), transacao.getDetalhes().getIban()).subscribe(response ->
+                    {
+                        if (response) {
+                            conectaEmissorService.enviarMovimento(transacao, bancDestino.getChave(), bancDestino.getTopico());
+                        }else {
+                            conectaEmissorService.enviarMovimento(transacao, bancoOrigem.getChave(), bancoOrigem.getTopicoFalha());
+                        }
+                    }
+            );
         }
     }
 

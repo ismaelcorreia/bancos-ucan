@@ -16,11 +16,6 @@ import java.util.UUID;
 public class UserController {
 
     private final UserRepo userRepository;
-//
-//    @Autowired
-//    public UserController(UserRepo userRepository) {
-//        this.userRepository = userRepository;
-//    }
 
     @GetMapping
     public Flux<User> getAllUsers() {
