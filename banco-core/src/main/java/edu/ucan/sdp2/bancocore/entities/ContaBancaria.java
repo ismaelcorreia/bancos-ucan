@@ -4,6 +4,7 @@ import edu.ucan.sdp2.bancocore.commons.GenericId;
 import edu.ucan.sdp2.bancocore.enums.Moeda;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,16 +23,21 @@ public class ContaBancaria extends GenericId {
     private String numeroConta;
     @Column(unique = true, updatable = false, nullable = false)
     private String ibanConta;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Utilizador> representantes;
     private Double saldoDisponivel;
     private Double saldoContabilistico;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<ContaBancaria> subContasBancaria;
     private Moeda moeda;
     public ContaBancaria(UUID id) {
         super(id);
     }
 
-
+    @Override
+    public String toString() {
+        return "ContaBancaria{" +
+                "numeroConta='" + numeroConta + '\'' +
+                '}';
+    }
 }

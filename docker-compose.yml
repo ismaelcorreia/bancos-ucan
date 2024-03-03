@@ -112,7 +112,7 @@ services:
       - DB_USER=postgres
       - DB_PASSWORD=postgres
     ports:
-      - 8092:809
+      - 8092:8092
       
   # Serviço do MongoDB
   conecta_mongo:

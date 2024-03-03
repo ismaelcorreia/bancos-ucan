@@ -2,6 +2,7 @@ package edu.ucan.sdp2.bancocore.controllers;
 
 
 import edu.ucan.sdp2.bancocore.dto.Resposta;
+import edu.ucan.sdp2.bancocore.dto.respostas.ContaRespotaDto;
 import edu.ucan.sdp2.bancocore.entities.ContaBancaria;
 import edu.ucan.sdp2.bancocore.services.ContaService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/contas")
 @RequiredArgsConstructor
-public class ContaController extends ControladorGenerico<ContaBancaria, ContaBancaria> {
+public class ContaController extends ControladorGenerico<ContaBancaria, ContaRespotaDto> {
 
 
     @Autowired

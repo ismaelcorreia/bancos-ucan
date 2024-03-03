@@ -37,7 +37,7 @@ public class FiltroAutenticacao extends OncePerRequestFilter {
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     var user = repo.findByUsername(username);
                     SessaoRequisicao.utilizador = user;
-
+                    SessaoRequisicao.token = jwtToken;
                     // TODO:
                     if (jwtUtil.validarToken(SessaoRequisicao.utilizador, jwtToken)) {
                         var authToken = new UsernamePasswordAuthenticationToken(

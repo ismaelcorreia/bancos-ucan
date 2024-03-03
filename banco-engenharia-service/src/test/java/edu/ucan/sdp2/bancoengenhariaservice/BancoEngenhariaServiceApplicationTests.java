@@ -1,25 +1,20 @@
 package edu.ucan.sdp2.bancoengenhariaservice;
 
 
-import edu.ucan.sdp2.bancocore.services.conecta.Producer;
+import edu.ucan.sdp2.bancocore.services.conecta.ConectaTransacaoService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
-
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.UUID;
-
 @SpringBootTest
 class BancoEngenhariaServiceApplicationTests {
 
 
-    private final Producer producer;
+    private final ConectaTransacaoService conectaTransacaoService;
     @Autowired
-    public BancoEngenhariaServiceApplicationTests(Producer producer) {
-        this.producer = producer;
+    public BancoEngenhariaServiceApplicationTests(ConectaTransacaoService conectaTransacaoService) {
+        this.conectaTransacaoService = conectaTransacaoService;
     }
 
     @Value("${banco.topico.transferencia-sucesso}")

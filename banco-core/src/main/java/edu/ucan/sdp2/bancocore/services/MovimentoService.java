@@ -3,6 +3,7 @@ package edu.ucan.sdp2.bancocore.services;
 
 import edu.ucan.sdp2.bancocore.dto.Resposta;
 import edu.ucan.sdp2.bancocore.dto.requisicoes.EntidadeRequisicaoAbstract;
+import edu.ucan.sdp2.bancocore.dto.respostas.MovimentosRespotaDto;
 import edu.ucan.sdp2.bancocore.entities.ContaBancaria;
 import edu.ucan.sdp2.bancocore.entities.Movimento;
 import edu.ucan.sdp2.bancocore.enums.TipoMovimento;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
-public class MovimentoService extends ServicoGenerico<Movimento, Movimento>{
+public class MovimentoService extends ServicoGenerico<Movimento, MovimentosRespotaDto>{
 
 
 
@@ -31,8 +32,15 @@ public class MovimentoService extends ServicoGenerico<Movimento, Movimento>{
 
 
     @Override
-    protected Movimento mapearResposta(Movimento model) {
-        return model;
+    protected MovimentosRespotaDto mapearResposta(Movimento model) {
+        MovimentosRespotaDto movimentoResposta = new MovimentosRespotaDto();
+        movimentoResposta.setTipoMovimento(model.getTipoMovimento());
+        movimentoResposta.setData(model.getDataCriacao());
+        movimentoResposta.setValor(model.getValorMovimento());
+        movimentoResposta.setValorAnterior(model.getSaldoAnterior());
+        movimentoResposta.setValorPosterir(model.getSaldoDepois());
+        movimentoResposta.setId(model.getId());
+        return movimentoResposta;
     }
 
     @Override
@@ -55,7 +63,7 @@ public class MovimentoService extends ServicoGenerico<Movimento, Movimento>{
         if(contaBancaria == null) {
             return new Resposta<>("Não reconhecemos nenhuma conta com este ID", null);
         }
-        double valorDepois;
+        double valorDepois = 0;
         if (movimento.getTipoMovimento().equals(TipoMovimento.Debito)) {
             valorDepois = contaBancaria.getSaldoDisponivel() - movimento.getValorMovimento();
             if (valorDepois < 0) {
@@ -67,7 +75,7 @@ public class MovimentoService extends ServicoGenerico<Movimento, Movimento>{
         movimento.setSaldoAnterior(contaBancaria.getSaldoDisponivel());
         movimento.setSaldoDepois(valorDepois);
         contaBancaria.setSaldoDisponivel(valorDepois);
-        contaBancariaRepository.save(contaBancaria);
+        movimento.setConta(contaBancariaRepository.save(contaBancaria));
         return new Resposta<>("Movimento bem sucedido.", repository.save(movimento));
     }
 
@@ -114,10 +122,17 @@ public class MovimentoService extends ServicoGenerico<Movimento, Movimento>{
 
     public void actualizarSaldoContabilistico(Movimento movimento) {
         var contaBancaria = movimento.getConta();
-        double saldo = contaBancaria.getSaldoDisponivel();
-        contaBancaria.setSaldoContabilistico(saldo);
+        double valor;
+        if (movimento.getTipoMovimento().equals(TipoMovimento.Debito)) {
+            valor = contaBancaria.getSaldoContabilistico() - movimento.getValorMovimento();
+        }else {
+            valor = contaBancaria.getSaldoContabilistico() + movimento.getValorMovimento();
+        }
+        contaBancaria.setSaldoContabilistico(valor);
         contaBancariaRepository.save(contaBancaria);
     }
+
+
 
     public void reverterMovimento(Movimento movimento) {
         if (movimento.getTipoMovimento().equals(TipoMovimento.Debito)) {
@@ -142,6 +157,27 @@ public class MovimentoService extends ServicoGenerico<Movimento, Movimento>{
         return resposta;
     }
 
+    public Resposta<Movimento> creditarContaPorIban(Movimento movimento) {
+        ContaBancaria contaBancaria = contaBancariaRepository.findFirstByIbanConta(movimento.getConta().getIbanConta());
+
+        if(contaBancaria == null) {
+            return new Resposta<>("Não reconhecemos nenhuma conta com este IBAN", null);
+        }
+        double valorDepois;
+        if (movimento.getTipoMovimento().equals(TipoMovimento.Debito)) {
+            valorDepois = contaBancaria.getSaldoDisponivel() - movimento.getValorMovimento();
+            if (valorDepois < 0) {
+                return new Resposta<>("O saldo da sua conta é insuficiente para realizar a operação", null);
+            }
+        }else {
+            valorDepois = contaBancaria.getSaldoDisponivel() + movimento.getValorMovimento();
+        }
+        movimento.setSaldoAnterior(contaBancaria.getSaldoDisponivel());
+        movimento.setSaldoDepois(valorDepois);
+        contaBancaria.setSaldoDisponivel(valorDepois);
+        contaBancariaRepository.save(contaBancaria);
+        return new Resposta<>("Movimento bem sucedido.", repository.save(movimento));
+    }
     public Resposta<Movimento> creditarConta(ContaBancaria contaBancaria, double valor) {
         Movimento movimento = new Movimento();
         movimento.setTipoMovimento(TipoMovimento.Credito);
@@ -149,7 +185,7 @@ public class MovimentoService extends ServicoGenerico<Movimento, Movimento>{
         movimento.setConta(contaBancaria);
         var resposta = movimentarConta(movimento);
         if (resposta.getDados() != null) {
-            actualizarSaldoContabilistico(movimento);
+            actualizarSaldoContabilistico(resposta.getDados());
         }
         return resposta;
     }

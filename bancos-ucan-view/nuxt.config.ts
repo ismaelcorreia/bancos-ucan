@@ -18,5 +18,8 @@ export default defineNuxtConfig({
   }
   },
 
-  css: ['primevue/resources/themes/aura-dark-amber/theme.css']
+  css: ['primevue/resources/themes/aura-dark-amber/theme.css'],
+  alias:{
+    "assets/**": "@assets"
+  }
 })

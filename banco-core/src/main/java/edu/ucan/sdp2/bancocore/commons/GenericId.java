@@ -34,7 +34,9 @@ public abstract class GenericId {
     }
     @PrePersist
     private void criacao(){
-        this.id = UUID.randomUUID();
+        if ( this.id == null){
+            this.id = UUID.randomUUID();
+        }
         dataCriacao = LocalDateTime.now();
         if (this.status == null){
             this.status = Status.ACTIVE;

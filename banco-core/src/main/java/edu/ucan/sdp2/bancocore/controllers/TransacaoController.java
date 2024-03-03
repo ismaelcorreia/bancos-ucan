@@ -4,6 +4,7 @@ package edu.ucan.sdp2.bancocore.controllers;
 import edu.ucan.sdp2.bancocore.dto.Resposta;
 import edu.ucan.sdp2.bancocore.dto.requisicoes.TransacaoDepositoRequisicao;
 import edu.ucan.sdp2.bancocore.dto.requisicoes.TransacaoTransferenciaRequisicao;
+import edu.ucan.sdp2.bancocore.dto.respostas.TransacaoRespotaDto;
 import edu.ucan.sdp2.bancocore.entities.Transacao;
 import edu.ucan.sdp2.bancocore.services.TransacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/transacao")
-public class TransacaoController extends ControladorGenerico<Transacao, Transacao> {
+public class TransacaoController extends ControladorGenerico<Transacao, TransacaoRespotaDto> {
 
 
     @Autowired

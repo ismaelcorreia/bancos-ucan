@@ -2,6 +2,7 @@ package edu.ucan.sdp2.connecta.controller;
 
 import edu.ucan.sdp2.connecta.model.User;
 import edu.ucan.sdp2.connecta.repo.UserRepo;
+import edu.ucan.sdp2.connecta.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,35 +16,30 @@ import java.util.UUID;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserController {
 
-    private final UserRepo userRepository;
+    private final UserService userService;
 
     @GetMapping
     public Flux<User> getAllUsers() {
-        return userRepository.findAll();
+        return userService.getAllUsers();
     }
 
     @GetMapping("/{id}")
     public Mono<User> getUserById(@PathVariable String id) {
-        return userRepository.findById(id);
+        return userService.getUserById(id);
     }
 
     @PostMapping
     public Mono<User> createUser(@RequestBody User user) {
-        return userRepository.save(user);
+        return userService.createUser(user);
     }
 
     @PutMapping("/{id}")
     public Mono<User> updateUser(@PathVariable String id, @RequestBody User user) {
-        return userRepository.findById(id)
-                .flatMap(existingUser -> {
-                    existingUser.setName(user.getName());
-                    existingUser.setAge(user.getAge());
-                    return userRepository.save(existingUser);
-                });
+        return userService.updateUser(id, user);
     }
 
     @DeleteMapping("/{id}")
     public Mono<Void> deleteUser(@PathVariable String id) {
-        return userRepository.deleteById(id);
+        return userService.deleteUser(id);
     }
 }

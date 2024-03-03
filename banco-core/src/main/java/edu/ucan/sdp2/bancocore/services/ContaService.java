@@ -3,6 +3,7 @@ package edu.ucan.sdp2.bancocore.services;
 import edu.ucan.sdp2.bancocore.dto.Resposta;
 import edu.ucan.sdp2.bancocore.dto.requisicoes.ContaRequisicaoDto;
 import edu.ucan.sdp2.bancocore.dto.requisicoes.EntidadeRequisicaoAbstract;
+import edu.ucan.sdp2.bancocore.dto.respostas.ContaRespotaDto;
 import edu.ucan.sdp2.bancocore.entities.ContaBancaria;
 import edu.ucan.sdp2.bancocore.entities.Utilizador;
 import edu.ucan.sdp2.bancocore.repositories.ContaBancariaRepository;
@@ -16,8 +17,10 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 @Service
-public class ContaService extends ServicoGenerico<ContaBancaria, ContaBancaria>{
+public class ContaService extends ServicoGenerico<ContaBancaria, ContaRespotaDto>{
 
     private final ManipuladorContaUtil manipuladorContaUtil;
     private final UtilizadorRepository utilizadorRepository;
@@ -29,8 +32,16 @@ public class ContaService extends ServicoGenerico<ContaBancaria, ContaBancaria>{
     }
 
     @Override
-    protected ContaBancaria mapearResposta(ContaBancaria model) {
-        return model;
+    protected ContaRespotaDto mapearResposta(ContaBancaria model) {
+
+        ContaRespotaDto contaRespotaDto = new ContaRespotaDto();
+        contaRespotaDto.setId(model.getId());
+        contaRespotaDto.setNumero(model.getNumeroConta());
+        contaRespotaDto.setIban(model.getIbanConta());
+        contaRespotaDto.setSaldoContabilistico(model.getSaldoContabilistico());
+        contaRespotaDto.setSaldoDisponivel(model.getSaldoDisponivel());
+        contaRespotaDto.setUltimaActualizacao(model.getDataActualizacao());
+        return contaRespotaDto;
     }
     @Override
     public ResponseEntity<Resposta> criar(EntidadeRequisicaoAbstract<ContaBancaria> entityRequest) {
@@ -86,15 +97,21 @@ public class ContaService extends ServicoGenerico<ContaBancaria, ContaBancaria>{
     }
 
 
+
     public ResponseEntity<Resposta> minhasContas() {
-        var conta = getContaBancariaRepository().findByRepresentantesIn(List.of(SessaoRequisicao.utilizador));
-        if (conta == null) {
+        var contas = getContaBancariaRepository().findByRepresentantesIn(List.of(SessaoRequisicao.utilizador));
+        if (contas == null) {
             return new Resposta<>("Não há contas bancárias para si no momento", null).naoEncontrado();
         }
-        return new Resposta<>("Conta carregada com sucesso!", conta).sucesso();
+        return new Resposta<>("Conta carregada com sucesso!",
+                contas.stream().map(this::mapearResposta).collect(Collectors.toList())).sucesso();
     }
 
     private ContaBancariaRepository getContaBancariaRepository() {
         return (ContaBancariaRepository)this.repository;
+    }
+
+    public ContaBancaria findFirstByIbanConta(String iban) {
+        return getContaBancariaRepository().findFirstByIbanConta(iban);
     }
 }

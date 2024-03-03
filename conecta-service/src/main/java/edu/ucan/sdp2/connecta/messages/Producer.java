@@ -19,10 +19,10 @@ public class Producer {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void enviarEvento(TransacaoConecta transacao, String topico) {
+    public void enviarTransacao(TransacaoConecta transacao, String topico) {
         try {
             log.info("Enviando dados ao topico {} com dados {}", topico, transacao.toJson());
-            kafkaTemplate.send(topico,"banco-engenharia-grupo", transacao.toJson());
+            kafkaTemplate.send(topico, transacao.getTipoEvento().name(), transacao.toJson());
         } catch (Exception e) {
             log.error("Erro ao enviar dados ao topico {} com dados {}", topico, transacao, e);
         }

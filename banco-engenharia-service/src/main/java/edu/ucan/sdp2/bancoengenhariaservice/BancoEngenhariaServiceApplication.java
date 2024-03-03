@@ -20,7 +20,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
         "edu.ucan.sdp2.bancocore.mapper",
         "edu.ucan.sdp2.bancocore.services",
         "edu.ucan.sdp2.conectacore.service",
-        "edu.ucan.sdp2.conectacore.banco",
         "edu.ucan.sdp2.bancocore.bootstrap",
         "edu.ucan.sdp2.bancocore.controllers",
         "edu.ucan.sdp2.bancocore.controllers.publico",

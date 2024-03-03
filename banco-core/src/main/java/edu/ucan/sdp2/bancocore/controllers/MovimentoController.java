@@ -2,6 +2,7 @@ package edu.ucan.sdp2.bancocore.controllers;
 
 
 import edu.ucan.sdp2.bancocore.dto.Resposta;
+import edu.ucan.sdp2.bancocore.dto.respostas.MovimentosRespotaDto;
 import edu.ucan.sdp2.bancocore.entities.Movimento;
 import edu.ucan.sdp2.bancocore.services.MovimentoService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/movimentos")
 @RequiredArgsConstructor
-public class MovimentoController extends ControladorGenerico<Movimento, Movimento> {
+public class MovimentoController extends ControladorGenerico<Movimento, MovimentosRespotaDto> {
 
 
     @Autowired

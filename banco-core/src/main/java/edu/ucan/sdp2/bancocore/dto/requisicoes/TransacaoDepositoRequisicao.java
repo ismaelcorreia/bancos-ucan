@@ -4,7 +4,7 @@ import edu.ucan.sdp2.bancocore.entities.Movimento;
 import edu.ucan.sdp2.bancocore.entities.Transacao;
 import edu.ucan.sdp2.bancocore.enums.StatusTransacao;
 import edu.ucan.sdp2.bancocore.enums.TipoMovimento;
-import edu.ucan.sdp2.conectacore.enums.TipoOperacao;
+import edu.ucan.sdp2.bancocore.enums.TipoOperacao;
 import lombok.Data;
 
 @Data
